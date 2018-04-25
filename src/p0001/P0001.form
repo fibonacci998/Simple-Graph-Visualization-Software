@@ -11,7 +11,6 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="newOptionInMenu">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="New"/>
               </Properties>
               <Events>
@@ -20,7 +19,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="openOptionInMenu">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Open"/>
               </Properties>
               <Events>
@@ -29,7 +27,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="saveOptionInMenu">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <Events>

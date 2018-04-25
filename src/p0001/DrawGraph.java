@@ -17,6 +17,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -35,8 +36,8 @@ public class DrawGraph extends Canvas{
     Graph graph;
     
     //list of axis point to draw
-    Vector saveVerticesAxis;
-    
+    HashMap<String, Pair> saveVerticesAxis;
+    HashMap<String, Pair> sizeVertices;
     public DrawGraph() {
         this.setSize(300, 300);
         canvas = this;
@@ -52,10 +53,14 @@ public class DrawGraph extends Canvas{
     }
     //if has not axis of element, random axis to draw it
     public void paint(Graphics g){
-        saveVerticesAxis=new Vector();
+        saveVerticesAxis=new HashMap<>();
+        sizeVertices=new HashMap<>();
+        g.create();
+        
         Graphics2D g2=(Graphics2D) g;
         g2.setBackground(Color.WHITE);
-        g2.clearRect(0, 0, this.getWidth(), this.getHeight());
+        //g2.drawRect(0, 0, this.getWidth(), this.getHeight());
+        g2.clearRect(0, 0, this.getWidth()*10, this.getHeight()*10);
         Iterator it=graph.nameVertice.entrySet().iterator();
         //loop to paint all element
         while (it.hasNext()){
@@ -67,9 +72,61 @@ public class DrawGraph extends Canvas{
             int x=getRanNum(0,200);
             int y=getRanNum(0,200);
             drawVertice(g,name,label,color,x,y);
-            saveVerticesAxis.add(new Pair<>(x,y));
+            saveVerticesAxis.put(name,new Pair<>(x,y));
         }
-        drawArrow(g, 30, 30, 200, 200);
+        Boolean error=false;
+        for (Pair edge:graph.adjEdges){
+            String u=(String) edge.getKey();
+            String v=(String) edge.getValue();
+            int x1=(int) saveVerticesAxis.get(u).getKey();
+            int y1=(int) saveVerticesAxis.get(u).getValue();
+            int height1=(int) sizeVertices.get(u).getKey();
+            int width1=(int) sizeVertices.get(u).getValue();
+            int x2=(int) saveVerticesAxis.get(v).getKey();
+            int y2=(int) saveVerticesAxis.get(v).getValue();
+            int height2=(int) sizeVertices.get(v).getKey();
+            int width2=(int) sizeVertices.get(v).getValue();
+            if (y1+height1+3<y2){
+                int xStart=x1+width1/2;
+                int yStart=y1+height1;
+                int xEnd=x2+width2/2;
+                int yEnd=y2;
+                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                continue;
+            }
+            
+            if (y2+height2+3<y1){
+                int xStart=x1+width1/2;
+                int yStart=y1;
+                int xEnd=x2+width2/2;
+                int yEnd=y2+height2;
+                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                continue;
+            }
+            
+            if (x1+width1+3<x2){
+                int xStart=x1+width1;
+                int yStart=y1+height1/2;
+                int xEnd=x2;
+                int yEnd=y2+height2/2;
+                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                continue;
+            }
+            //if (x2+width2+3<x1)
+            {
+                int xStart=x1;
+                int yStart=y1+height1/2;
+                int xEnd=x2+width2;
+                int yEnd=y2+height2/2;
+                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                continue;            
+            }
+//            error=true;
+//            System.out.println("Error");
+        }
+        if (error) 
+            this.paint(g);
+        //drawArrow(g, 30, 30, 200, 200);
     }
     //if has axis of element, use it to draw it
     public void paintWithSavedData(Graphics g){
@@ -85,13 +142,13 @@ public class DrawGraph extends Canvas{
             Vector propertise=graph.propertiseVertice.get(name);
             String label=(String) propertise.get(0);
             String color=(String) propertise.get(1);
-            Pair saved=(Pair) saveVerticesAxis.get(position);
+            Pair saved=(Pair) saveVerticesAxis.get(name);
             int x=(int) saved.getKey();
             int y=(int) saved.getValue();
             drawVertice(g,name,label,color,x,y);
             position++;
         }
-        drawArrow(g, 30, 30, 200, 200);
+        //drawArrow(g, 30, 30, 200, 200);
     }
     
     //process draw vertice into graphic with its information
@@ -117,6 +174,7 @@ public class DrawGraph extends Canvas{
         int h=fm.getAscent();
         //draw vertice 
         g2.drawOval(x, y, w*2, h*4);
+        sizeVertices.put(name, new Pair(h*4,w*2));
         g2.setStroke(oldStroke);
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("TimesNewRoman", Font.BOLD, 13));
@@ -150,4 +208,5 @@ public class DrawGraph extends Canvas{
         int number = new Random().nextInt(max - min) +min;
         return number;
     }
+
 }

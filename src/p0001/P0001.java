@@ -31,6 +31,7 @@ public class P0001 extends javax.swing.JFrame {
     DrawGraph canvas;
     public P0001() {
         initComponents();
+        
         //init the graph
         graph=new Graph();
     }
@@ -105,7 +106,6 @@ public class P0001 extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        newOptionInMenu.setSelected(true);
         newOptionInMenu.setText("New");
         newOptionInMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,7 +114,6 @@ public class P0001 extends javax.swing.JFrame {
         });
         jMenu1.add(newOptionInMenu);
 
-        openOptionInMenu.setSelected(true);
         openOptionInMenu.setText("Open");
         openOptionInMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,7 +122,6 @@ public class P0001 extends javax.swing.JFrame {
         });
         jMenu1.add(openOptionInMenu);
 
-        saveOptionInMenu.setSelected(true);
         saveOptionInMenu.setText("Save");
         saveOptionInMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -212,6 +210,11 @@ public class P0001 extends javax.swing.JFrame {
         int result=fileChooser.showSaveDialog(jMenu1);
         if (result==JFileChooser.APPROVE_OPTION){
             File file=fileChooser.getSelectedFile();
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(P0001.class.getName()).log(Level.SEVERE, null, ex);
+            }
             BufferedImage image=new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2=(Graphics2D) image.getGraphics();
             canvas.paintWithSavedData(g2);
@@ -236,6 +239,7 @@ public class P0001 extends javax.swing.JFrame {
         fileChooser.setCurrentDirectory(new File("."));
         if (fileChooser.showOpenDialog(jMenu1)==JFileChooser.APPROVE_OPTION){
             File f=fileChooser.getSelectedFile();
+            pnGraph.removeAll();
             JLabel jl=new JLabel();
             jl.setSize(300, 300);
             jl.setIcon(new ImageIcon(f.toString()));
