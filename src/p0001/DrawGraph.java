@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 
 /**
@@ -32,7 +35,7 @@ import javafx.util.Pair;
 public class DrawGraph extends Canvas{
     //canvas create after paint graph
     final Canvas canvas;
-    
+    final int INT_SIZE=5;
     Graph graph;
     
     //list of axis point to draw
@@ -56,7 +59,7 @@ public class DrawGraph extends Canvas{
         saveVerticesAxis=new HashMap<>();
         sizeVertices=new HashMap<>();
         g.create();
-        
+        System.out.println("new");
         Graphics2D g2=(Graphics2D) g;
         g2.setBackground(Color.WHITE);
         //g2.drawRect(0, 0, this.getWidth(), this.getHeight());
@@ -69,15 +72,17 @@ public class DrawGraph extends Canvas{
             Vector propertise=graph.propertiseVertice.get(name);
             String label=(String) propertise.get(0);
             String color=(String) propertise.get(1);
-            int x=getRanNum(0,200);
-            int y=getRanNum(0,200);
+            int x=getRanNum(0,250,'X');
+            int y=getRanNum(0,250,'Y');
             drawVertice(g,name,label,color,x,y);
             saveVerticesAxis.put(name,new Pair<>(x,y));
         }
         Boolean error=false;
+        //g2.drawLine(300, 3, 60, 600);
         for (Pair edge:graph.adjEdges){
             String u=(String) edge.getKey();
             String v=(String) edge.getValue();
+            String label=graph.getLabelEdge(u, v);
             int x1=(int) saveVerticesAxis.get(u).getKey();
             int y1=(int) saveVerticesAxis.get(u).getValue();
             int height1=(int) sizeVertices.get(u).getKey();
@@ -86,46 +91,49 @@ public class DrawGraph extends Canvas{
             int y2=(int) saveVerticesAxis.get(v).getValue();
             int height2=(int) sizeVertices.get(v).getKey();
             int width2=(int) sizeVertices.get(v).getValue();
-            if (y1+height1+3<y2){
+            if (y1+height1+INT_SIZE<y2){
                 int xStart=x1+width1/2;
                 int yStart=y1+height1;
                 int xEnd=x2+width2/2;
                 int yEnd=y2;
-                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                drawArrow(g, xStart, yStart, xEnd, yEnd,label);
+                System.out.println("th1");
                 continue;
             }
             
-            if (y2+height2+3<y1){
+            if (y2+height2+INT_SIZE<y1){
                 int xStart=x1+width1/2;
                 int yStart=y1;
                 int xEnd=x2+width2/2;
                 int yEnd=y2+height2;
-                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                drawArrow(g, xStart, yStart, xEnd, yEnd,label);
+                System.out.println("th2");
                 continue;
             }
             
-            if (x1+width1+3<x2){
+            if (x1+width1+INT_SIZE<x2){
                 int xStart=x1+width1;
                 int yStart=y1+height1/2;
                 int xEnd=x2;
                 int yEnd=y2+height2/2;
-                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                drawArrow(g, xStart, yStart, xEnd, yEnd,label);
+                System.out.println("th3");
                 continue;
             }
-            //if (x2+width2+3<x1)
+            //if (x2+width2+INT_SIZE<x1)
             {
                 int xStart=x1;
                 int yStart=y1+height1/2;
                 int xEnd=x2+width2;
                 int yEnd=y2+height2/2;
-                drawArrow(g, xStart, yStart, xEnd, yEnd);
+                drawArrow(g, xStart, yStart, xEnd, yEnd,label);
+                System.out.println("th4");
                 continue;            
             }
-//            error=true;
-//            System.out.println("Error");
+            //error=true;
+            //System.out.println("Error");
         }
-        if (error) 
-            this.paint(g);
+        
         //drawArrow(g, 30, 30, 200, 200);
     }
     //if has axis of element, use it to draw it
@@ -182,8 +190,9 @@ public class DrawGraph extends Canvas{
         g2.drawString(text, x+(w/2), y+(h*2));
     }
     //process draw arrow for (x1,y1) to (x2,y2) into graphic
-    private void drawArrow(Graphics g, int x1, int y1, int x2, int y2) {
+    private void drawArrow(Graphics g, int x1, int y1, int x2, int y2,String label) {
         Graphics2D g2 = (Graphics2D) g;
+        
         int ARR_SIZE = 10;
         //set border for line
         float thickness=2;
@@ -201,12 +210,40 @@ public class DrawGraph extends Canvas{
         g2.drawLine(0, 0, len, 0);
         g2.fillPolygon(new int[] {len, len-ARR_SIZE, len-ARR_SIZE, len},
                       new int[] {0, -ARR_SIZE, ARR_SIZE, 0}, 4);
+        //g2.drawString("tuan", len, 0);
+        
+        //set old status of graphic
         g2.setStroke(oldStroke);
+        try {
+            g2.transform(at.createInverse());
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(DrawGraph.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        g2.drawString(label, (x1+x2)/2+5, (y1+y2)/2+5);
     }
     //return random number from min to max
-    private int getRanNum(int min, int max) {
-        int number = new Random().nextInt(max - min) +min;
-        return number;
+    private int getRanNum(int min, int max, char label) {
+        while (true){
+            int number = new Random().nextInt(max - min) +min;
+            if (check(number,label)){
+                return number;
+            }
+        }
     }
 
+    private boolean check(int number,char label) {
+        Iterator it=saveVerticesAxis.entrySet().iterator();
+        Boolean ok=false;
+        while (it.hasNext()){
+            Map.Entry pair=(Map.Entry) it.next();
+            Pair value = (Pair) pair.getValue();
+            int x=(int) value.getKey();
+            int y=(int) value.getValue();
+            int numGet=(label=='X')?x:y;
+            if (Math.abs(numGet-number)<50){
+                return false;
+            }
+        }
+        return true;
+    }
 }

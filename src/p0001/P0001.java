@@ -199,7 +199,10 @@ public class P0001 extends javax.swing.JFrame {
         graph=analize.createGraph();
         DrawGraph draw=new DrawGraph(graph);
         canvas=(DrawGraph) draw.getCanvas();
+        
         pnGraph.add(canvas);
+        
+        //btnVisualizeActionPerformed(evt);
     }//GEN-LAST:event_btnVisualizeActionPerformed
 
     private void saveOptionInMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveOptionInMenuActionPerformed

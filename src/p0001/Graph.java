@@ -40,4 +40,8 @@ public class Graph {
         adjEdges.add(new Pair<>(u,v));
         matrixGraph[nameVertice.get(u)][nameVertice.get(v)]=label;
     }
+    //return label of edge
+    String getLabelEdge(String u,String v){
+        return matrixGraph[nameVertice.get(u)][nameVertice.get(v)];
+    }
 }
