@@ -92,7 +92,7 @@ public class AnalizeGraphInput {
         boolean startColor=false;
         boolean startName=false;
         String labelVertice="",nameVertice="",colorVertice="";       
-        StringTokenizer st=new StringTokenizer(inforVertice,"\t\" ");
+        StringTokenizer st=new StringTokenizer(inforVertice,"\t\"[] ");
         //read information from string after split
         while (st.hasMoreTokens()){
             String temp=st.nextToken();
@@ -114,7 +114,7 @@ public class AnalizeGraphInput {
     }
     //analize information of an edge: from vertice, to vertice, label
     private void analizeEdge(String edge) {
-        StringTokenizer st=new StringTokenizer(edge,"\t\"-> ");
+        StringTokenizer st=new StringTokenizer(edge,"\t\"->[] ");
         String u="",v="",label="";
         //read information from string after split
         while (st.hasMoreTokens()){

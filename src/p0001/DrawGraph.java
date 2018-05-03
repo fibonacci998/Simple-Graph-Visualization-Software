@@ -97,7 +97,6 @@ public class DrawGraph extends Canvas{
                 int xEnd=x2+width2/2;
                 int yEnd=y2;
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
-                System.out.println("th1");
                 continue;
             }
             
@@ -107,7 +106,6 @@ public class DrawGraph extends Canvas{
                 int xEnd=x2+width2/2;
                 int yEnd=y2+height2;
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
-                System.out.println("th2");
                 continue;
             }
             
@@ -117,7 +115,6 @@ public class DrawGraph extends Canvas{
                 int xEnd=x2;
                 int yEnd=y2+height2/2;
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
-                System.out.println("th3");
                 continue;
             }
             //if (x2+width2+INT_SIZE<x1)
@@ -127,14 +124,9 @@ public class DrawGraph extends Canvas{
                 int xEnd=x2+width2;
                 int yEnd=y2+height2/2;
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
-                System.out.println("th4");
                 continue;            
             }
-            //error=true;
-            //System.out.println("Error");
         }
-        
-        //drawArrow(g, 30, 30, 200, 200);
     }
     //if has axis of element, use it to draw it
     public void paintWithSavedData(Graphics g){
@@ -156,7 +148,6 @@ public class DrawGraph extends Canvas{
             drawVertice(g,name,label,color,x,y);
             position++;
         }
-        //drawArrow(g, 30, 30, 200, 200);
     }
     
     //process draw vertice into graphic with its information
@@ -202,15 +193,15 @@ public class DrawGraph extends Canvas{
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
         int len = (int) Math.sqrt(dx*dx + dy*dy);
+        //transform the draw
         AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
         at.concatenate(AffineTransform.getRotateInstance(angle));
         g2.transform(at);
         
         // Draw horizontal arrow starting in (0, 0)
         g2.drawLine(0, 0, len, 0);
-        g2.fillPolygon(new int[] {len, len-ARR_SIZE, len-ARR_SIZE, len},
-                      new int[] {0, -ARR_SIZE, ARR_SIZE, 0}, 4);
-        //g2.drawString("tuan", len, 0);
+        g2.fillPolygon(new int[] {len, len-ARR_SIZE, len-ARR_SIZE},
+                      new int[] {0, -ARR_SIZE, ARR_SIZE}, 3);
         
         //set old status of graphic
         g2.setStroke(oldStroke);
@@ -219,7 +210,7 @@ public class DrawGraph extends Canvas{
         } catch (NoninvertibleTransformException ex) {
             Logger.getLogger(DrawGraph.class.getName()).log(Level.SEVERE, null, ex);
         }
-        g2.drawString(label, (x1+x2)/2+5, (y1+y2)/2+5);
+        g2.drawString(label, (x1+x2)/2+8, (y1+y2)/2);
     }
     //return random number from min to max
     private int getRanNum(int min, int max, char label) {
