@@ -18,6 +18,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class DrawGraph extends Canvas{
     //list of axis point to draw
     HashMap<String, Pair> saveVerticesAxis;
     HashMap<String, Pair> sizeVertices;
+    Vector<Vector> saveEdges;
     public DrawGraph() {
         this.setSize(300, 300);
         canvas = this;
@@ -58,6 +60,7 @@ public class DrawGraph extends Canvas{
     public void paint(Graphics g){
         saveVerticesAxis=new HashMap<>();
         sizeVertices=new HashMap<>();
+        saveEdges=new Vector<>();
         g.create();
         System.out.println("new");
         Graphics2D g2=(Graphics2D) g;
@@ -96,6 +99,10 @@ public class DrawGraph extends Canvas{
                 int yStart=y1+height1;
                 int xEnd=x2+width2/2;
                 int yEnd=y2;
+                Vector element=new Vector();
+                element.add(xStart);element.add(yStart);
+                element.add(xEnd);element.add(yEnd);element.add(label);
+                saveEdges.add(element);
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
                 continue;
             }
@@ -105,6 +112,10 @@ public class DrawGraph extends Canvas{
                 int yStart=y1;
                 int xEnd=x2+width2/2;
                 int yEnd=y2+height2;
+                Vector element=new Vector();
+                element.add(xStart);element.add(yStart);
+                element.add(xEnd);element.add(yEnd);element.add(label);
+                saveEdges.add(element);
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
                 continue;
             }
@@ -114,6 +125,10 @@ public class DrawGraph extends Canvas{
                 int yStart=y1+height1/2;
                 int xEnd=x2;
                 int yEnd=y2+height2/2;
+                Vector element=new Vector();
+                element.add(xStart);element.add(yStart);
+                element.add(xEnd);element.add(yEnd);element.add(label);
+                saveEdges.add(element);
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
                 continue;
             }
@@ -123,6 +138,10 @@ public class DrawGraph extends Canvas{
                 int yStart=y1+height1/2;
                 int xEnd=x2+width2;
                 int yEnd=y2+height2/2;
+                Vector element=new Vector();
+                element.add(xStart);element.add(yStart);
+                element.add(xEnd);element.add(yEnd);element.add(label);
+                saveEdges.add(element);
                 drawArrow(g, xStart, yStart, xEnd, yEnd,label);
                 continue;            
             }
@@ -135,7 +154,7 @@ public class DrawGraph extends Canvas{
         g2.clearRect(0, 0, this.getWidth(), this.getHeight());
         Iterator it=graph.nameVertice.entrySet().iterator();
         int position=0;
-        //loop to paint all element
+        //loop to paint all vertices
         while (it.hasNext()){
             Map.Entry pair=(Map.Entry) it.next();
             String name=(String) pair.getKey();
@@ -147,6 +166,16 @@ public class DrawGraph extends Canvas{
             int y=(int) saved.getValue();
             drawVertice(g,name,label,color,x,y);
             position++;
+        }
+        
+        //loop to paint all edges
+        for (Vector edge:saveEdges){
+            int xStart=(int) edge.get(0);
+            int yStart=(int) edge.get(1);
+            int xEnd=(int) edge.get(2);
+            int yEnd=(int) edge.get(3);
+            String label=(String) edge.get(4);
+            drawArrow(g, xStart, yStart, xEnd, yEnd, label);
         }
     }
     
