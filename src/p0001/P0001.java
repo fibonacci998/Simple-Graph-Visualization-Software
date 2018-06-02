@@ -7,6 +7,7 @@ package p0001;
 
 import java.awt.Canvas;
 import java.awt.Container;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+
 
 /**
  *
@@ -59,6 +61,11 @@ public class P0001 extends javax.swing.JFrame {
         saveOptionInMenu = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         txtInput.setColumns(20);
         txtInput.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -74,6 +81,7 @@ public class P0001 extends javax.swing.JFrame {
         });
 
         pnGraph.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnGraph.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnGraph.setMaximumSize(new java.awt.Dimension(300, 300));
         pnGraph.setMinimumSize(new java.awt.Dimension(300, 300));
 
@@ -180,6 +188,7 @@ public class P0001 extends javax.swing.JFrame {
     private void newOptionInMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newOptionInMenuActionPerformed
         // TODO add your handling code here:
         txtInput.setText("");
+        
         txtLabelGraph.setText("Graph");
         pnGraph.removeAll();
     }//GEN-LAST:event_newOptionInMenuActionPerformed
@@ -192,6 +201,8 @@ public class P0001 extends javax.swing.JFrame {
     private void btnVisualizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisualizeActionPerformed
         // TODO add your handling code here
         pnGraph.removeAll();
+        pnGraph.repaint();
+
         AnalizeGraphInput analize=new AnalizeGraphInput(txtInput.getText().toString());
         String name=analize.getNameGraph();
         txtLabelGraph.setText("Graph - "+name);
@@ -199,10 +210,14 @@ public class P0001 extends javax.swing.JFrame {
         graph=analize.createGraph();
         DrawGraph draw=new DrawGraph(graph);
         canvas=(DrawGraph) draw.getCanvas();
+        Graphics2D g=(Graphics2D) canvas.getGraphics();
+        //pnGraph.paintComponents(g);
+        //canvas.update(getGraphics());
         
         pnGraph.add(canvas);
+        pnGraph.repaint();
         
-        //btnVisualizeActionPerformed(evt);
+//btnVisualizeActionPerformed(evt);
     }//GEN-LAST:event_btnVisualizeActionPerformed
 
     private void saveOptionInMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveOptionInMenuActionPerformed
@@ -210,9 +225,19 @@ public class P0001 extends javax.swing.JFrame {
         JFileChooser fileChooser=new JFileChooser();
         //set directory of open function at same directory's project
         fileChooser.setCurrentDirectory(new File("."));
+        
         int result=fileChooser.showSaveDialog(jMenu1);
         if (result==JFileChooser.APPROVE_OPTION){
             File file=fileChooser.getSelectedFile();
+            String extension="";
+            String fileName=file.toString();
+            int i=fileName.lastIndexOf('.');
+            int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+            
+            if (i > p) {
+                extension = fileName.substring(i+1);
+            }
             try {
                 file.createNewFile();
             } catch (IOException ex) {
@@ -222,7 +247,7 @@ public class P0001 extends javax.swing.JFrame {
             Graphics2D g2=(Graphics2D) image.getGraphics();
             canvas.paintWithSavedData(g2);
             try {
-                ImageIO.write(image, "png", file);
+                ImageIO.write(image, extension, file);
             } catch (IOException ex) {
                 Logger.getLogger(P0001.class.getName()).log(Level.SEVERE, null, ex);
             }    
@@ -251,6 +276,11 @@ public class P0001 extends javax.swing.JFrame {
             pnGraph.repaint();
         }
     }//GEN-LAST:event_openOptionInMenuActionPerformed
+
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+        // TODO add your handling code here:
+        pnGraph.repaint();
+    }//GEN-LAST:event_formWindowStateChanged
 
     /**
      * @param args the command line arguments
