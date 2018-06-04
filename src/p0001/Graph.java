@@ -42,6 +42,17 @@ public class Graph {
     }
     //return label of edge
     String getLabelEdge(String u,String v){
+        String temp=matrixGraph[nameVertice.get(u)][nameVertice.get(v)];
         return matrixGraph[nameVertice.get(u)][nameVertice.get(v)];
+    }
+    
+    Boolean hasEdge(String vertice1, String vertice2){
+        boolean ok=(getLabelEdge(vertice1, vertice2)!=""?true:false);
+        return (getLabelEdge(vertice1, vertice2)!=""?true:false);
+    }
+    Boolean hasCircle(String vertice1, String vertice2, String vertice3){
+        return (hasEdge(vertice1, vertice2) 
+                && hasEdge(vertice1, vertice2)
+                && hasEdge(vertice3, vertice2));
     }
 }

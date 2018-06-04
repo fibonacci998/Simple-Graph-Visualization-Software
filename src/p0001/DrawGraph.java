@@ -77,9 +77,12 @@ public class DrawGraph extends Canvas{
             Vector propertise=graph.propertiseVertice.get(name);
             String label=(String) propertise.get(0);
             String color=(String) propertise.get(1);
-            int x=getRanNum(0,250,'X');
-            int y=getRanNum(0,250,'Y');
-            saveVerticesAxis.put(name,new Pair<>(x,y));
+//            int x=getRanNum(0,250,'X');
+//            int y=getRanNum(0,250,'Y');
+//            saveVerticesAxis.put(name,new Pair<>(x,y));
+            Pair<Integer,Integer> pairAxis;
+            pairAxis=generateAxis(name);
+            saveVerticesAxis.put(name, pairAxis);
             String text=label;
             FontMetrics fm=g2.getFontMetrics();
             int w=fm.stringWidth(text);
@@ -138,7 +141,7 @@ public class DrawGraph extends Canvas{
             Pair saved=(Pair) saveVerticesAxis.get(name);
             int x=(int) saved.getKey();
             int y=(int) saved.getValue();
-            //drawFullfill(g, name, "", "white", x, y);
+            drawFullfill(g, name, "", "white", x, y);
             drawVertice(g,name,label,color,x,y);
             position++;
         }
@@ -267,5 +270,80 @@ public class DrawGraph extends Canvas{
             }
         }
         return true;
+    }
+
+    private Pair<Integer, Integer> generateAxis(String name) {
+        Pair<Integer,Integer> pair=null;
+        for (int xAxis=0;xAxis<=250;xAxis++){
+            for (int yAxis=0;yAxis<=250;yAxis++){
+                if (checkDistance(xAxis,yAxis)){
+                    pair=new Pair(xAxis,yAxis);
+                    Pair pairVertices=checkCircle(name);
+                    if (pairVertices!=null){
+                        pair=getAxisForCirle3Element(pairVertices);
+                    }
+                    break;
+                }
+            }
+            if (pair!=null) break;
+        }
+        return pair;
+    }
+
+    private boolean checkDistance(int xAxis, int yAxis) {
+        Iterator it=saveVerticesAxis.entrySet().iterator();
+        Boolean ok=false;
+        while (it.hasNext()){
+            Map.Entry pair=(Map.Entry) it.next();
+            Pair value = (Pair) pair.getValue();
+            int x=(int) value.getKey();
+            int y=(int) value.getValue();
+            Double distance=Math.sqrt((xAxis-x)*(xAxis-x)+(yAxis-y)*(yAxis-y));
+            if (distance<=120) return false;
+        }
+        return true;
+    }
+
+    private Pair checkCircle(String name) {
+        Iterator it1=saveVerticesAxis.entrySet().iterator();
+        while(it1.hasNext()){
+            Map.Entry pair1=(Map.Entry) it1.next();
+            String name1=(String) pair1.getKey();
+            Iterator it2=saveVerticesAxis.entrySet().iterator();
+            while(it2.hasNext()){
+                Map.Entry pair2=(Map.Entry) it2.next();
+                String name2=(String) pair2.getKey();
+                if (name1.equals(name2))
+                    continue;
+                if (graph.hasCircle(name, name1, name2)){
+                    return new Pair(name1, name2);
+                }
+            }
+        }
+        return null;
+    }
+    private double distance(int x1,int y1,int x2,int y2){
+        return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+    }
+    private Pair getAxisForCirle3Element(Pair pairVertices) {
+        String nameVertice1=(String) pairVertices.getKey();
+        String nameVertice2=(String) pairVertices.getValue();
+        int xAxis1=(int) saveVerticesAxis.get(nameVertice1).getKey();
+        int yAxis1=(int) saveVerticesAxis.get(nameVertice1).getValue();
+        int xAxis2=(int) saveVerticesAxis.get(nameVertice2).getKey();
+        int yAxis2=(int) saveVerticesAxis.get(nameVertice2).getValue();
+        int xMidPoint=(xAxis1+xAxis2)/2;
+        int yMidPoint=(yAxis1+yAxis2)/2;
+        for (int x=0;x<=250;x++){
+            for (int y=0;y<=250;y++){
+                double dis1=distance(x, y, xAxis1, yAxis1);
+                double dis2=distance(x,y, xAxis2, yAxis2);
+                if (Math.abs(dis2-dis1)<10 && distance(x, y, xMidPoint, yMidPoint)>distance(xAxis1, yAxis1, xAxis2, yAxis2)/2){
+                    if (checkDistance(x, y))
+                    return new Pair(x, y);
+                }
+            }
+        }
+        return null;
     }
 }
