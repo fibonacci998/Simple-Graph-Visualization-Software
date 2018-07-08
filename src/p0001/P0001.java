@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 
 /**
@@ -31,6 +33,7 @@ public class P0001 extends javax.swing.JFrame {
      */
     Graph graph;
     DrawGraph canvas;
+    ControlScreen control=new ControlScreen(this);
     public P0001() {
         initComponents();
         
@@ -200,26 +203,64 @@ public class P0001 extends javax.swing.JFrame {
 
     private void btnVisualizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisualizeActionPerformed
         // TODO add your handling code here
-        pnGraph.removeAll();
-        pnGraph.repaint();
-
-        AnalizeGraphInput analize=new AnalizeGraphInput(txtInput.getText().toString());
-        String name=analize.getNameGraph();
-        txtLabelGraph.setText("Graph - "+name);
-        analize.analize();
-        graph=analize.createGraph();
-        DrawGraph draw=new DrawGraph(graph);
-        canvas=(DrawGraph) draw.getCanvas();
-        Graphics2D g=(Graphics2D) canvas.getGraphics();
-        //pnGraph.paintComponents(g);
-        //canvas.update(getGraphics());
+//        pnGraph.removeAll();
+//        pnGraph.repaint();
+//
+//        AnalizeGraphInput analize=new AnalizeGraphInput(txtInput.getText().toString());
+//        String name=analize.getNameGraph();
+//        txtLabelGraph.setText("Graph - "+name);
+//        analize.analize();
+//        graph=analize.createGraph();
+//        DrawGraph draw=new DrawGraph(graph);
+//        canvas=(DrawGraph) draw.getCanvas();
+//        Graphics2D g=(Graphics2D) canvas.getGraphics();
+//        //pnGraph.paintComponents(g);
+//        //canvas.update(getGraphics());
+//        
+//        pnGraph.add(canvas);
+//        pnGraph.repaint();
         
-        pnGraph.add(canvas);
-        pnGraph.repaint();
-        
-//btnVisualizeActionPerformed(evt);
+        control.visualize();
     }//GEN-LAST:event_btnVisualizeActionPerformed
+    
+    public Graph getGraph(){
+        return graph;
+    }
+    public void setGraph(Graph graphTemp){
+        graph=graphTemp;
+    }
+    public DrawGraph getCanvas() {
+        return canvas;
+    }
 
+    public void setCanvas(DrawGraph canvas) {
+        this.canvas = canvas;
+    }
+
+    public JPanel getPnGraph() {
+        return pnGraph;
+    }
+
+    public void setPnGraph(JPanel pnGraph) {
+        this.pnGraph = pnGraph;
+    }
+
+    public JTextArea getTxtInput() {
+        return txtInput;
+    }
+
+    public void setTxtInput(JTextArea txtInput) {
+        this.txtInput = txtInput;
+    }
+
+    public JLabel getTxtLabelGraph() {
+        return txtLabelGraph;
+    }
+
+    public void setTxtLabelGraph(JLabel txtLabelGraph) {
+        this.txtLabelGraph = txtLabelGraph;
+    }
+    
     private void saveOptionInMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveOptionInMenuActionPerformed
         // TODO add your handling code here:
         JFileChooser fileChooser=new JFileChooser();

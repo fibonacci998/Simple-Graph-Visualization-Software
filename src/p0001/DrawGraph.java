@@ -85,6 +85,7 @@ public class DrawGraph extends Canvas{
             saveVerticesAxis.put(name, pairAxis);
             String text=label;
             FontMetrics fm=g2.getFontMetrics();
+            
             int w=fm.stringWidth(text);
             int h=fm.getAscent();
             sizeVertices.put(name, new Pair(h*4,w*2));

@@ -40,19 +40,25 @@ public class Graph {
         adjEdges.add(new Pair<>(u,v));
         matrixGraph[nameVertice.get(u)][nameVertice.get(v)]=label;
     }
+    
     //return label of edge
     String getLabelEdge(String u,String v){
         String temp=matrixGraph[nameVertice.get(u)][nameVertice.get(v)];
         return matrixGraph[nameVertice.get(u)][nameVertice.get(v)];
     }
-    
+    Boolean hasVertice(String vertice){
+        return nameVertice.get(vertice)==null?false:true;
+    }
     Boolean hasEdge(String vertice1, String vertice2){
-        boolean ok=(getLabelEdge(vertice1, vertice2)!=""?true:false);
-        return (getLabelEdge(vertice1, vertice2)!=""?true:false);
+        boolean ok1=(getLabelEdge(vertice1, vertice2)!=null?true:false);
+        boolean ok2=(getLabelEdge(vertice2, vertice1)!=null?true:false);
+        if (ok1 || ok2) return true;
+        else return false;
+        
     }
     Boolean hasCircle(String vertice1, String vertice2, String vertice3){
         return (hasEdge(vertice1, vertice2) 
-                && hasEdge(vertice1, vertice2)
+                && hasEdge(vertice1, vertice3)
                 && hasEdge(vertice3, vertice2));
     }
 }
